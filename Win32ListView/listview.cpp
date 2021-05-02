@@ -1,6 +1,10 @@
-               #include <windows.h>
-#include "resource\resource.h"
+#define _CRT_SECURE_NO_WARNINGS
+#undef UNICODE
+#include "framework.h"
+#include "resource.h"
 #include <commctrl.h>
+#pragma comment(lib, "Shlwapi.lib")
+#pragma comment(lib, "comctl32.lib")
 #include <stdio.h>
 
 //==============Global Vatriabls===================
@@ -237,7 +241,8 @@ BOOL CALLBACK DialogProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 				plvbki.pszImage=url;
 				plvbki.xOffsetPercent=40;
 				plvbki.yOffsetPercent=15;
-				OleInitialize(NULL);
+				//CHG
+				//OleInitialize(NULL);
 				
 				SendMessage(hList,LVM_SETTEXTBKCOLOR, 0,(LPARAM)CLR_NONE);
 				SendMessage(hList,LVM_SETBKIMAGE,0,(LPARAM)(LPLVBKIMAGE)&plvbki);
@@ -251,20 +256,20 @@ BOOL CALLBACK DialogProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
                 memset(&LvCol,0,sizeof(LvCol)); // Reset Coluom
 				LvCol.mask=LVCF_TEXT|LVCF_WIDTH|LVCF_SUBITEM; // Type of mask
 				LvCol.cx=0x28;                                // width between each coloum
-				LvCol.pszText="Item";                     // First Header
+				LvCol.pszText=_strdup("Item");                     // First Header (memleak)
  				LvCol.cx=0x42;
 
 				// Inserting Couloms as much as we want
 				SendMessage(hList,LVM_INSERTCOLUMN,0,(LPARAM)&LvCol); // Insert/Show the coloum
-				LvCol.pszText="Sub Item1";                          // Next coloum
+				LvCol.pszText=_strdup("Sub Item1");                          // Next coloum (memleak)
                 SendMessage(hList,LVM_INSERTCOLUMN,1,(LPARAM)&LvCol); // ...
-				LvCol.pszText="Sub Item2";                       //
+				LvCol.pszText= _strdup("Sub Item2");                       //(memleak)
                 SendMessage(hList,LVM_INSERTCOLUMN,2,(LPARAM)&LvCol); //
-				LvCol.pszText="Sub Item3";                              //
+				LvCol.pszText= _strdup("Sub Item3");                              //(memleak)
                 SendMessage(hList,LVM_INSERTCOLUMN,3,(LPARAM)&LvCol); //
-				LvCol.pszText="Sub Item4";                            //
+				LvCol.pszText= _strdup("Sub Item4");                            //(memleak)
                 SendMessage(hList,LVM_INSERTCOLUMN,4,(LPARAM)&LvCol); //
-				LvCol.pszText="Sub Item5";                      //
+				LvCol.pszText= _strdup("Sub Item5");                      //(memleak)
                 SendMessage(hList,LVM_INSERTCOLUMN,5,(LPARAM)&LvCol); // ...same as above
 
                 memset(&LvItem,0,sizeof(LvItem)); // Reset Item Struct
@@ -276,7 +281,7 @@ BOOL CALLBACK DialogProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
                 
 				LvItem.iItem=0;          // choose item  
 				LvItem.iSubItem=0;       // Put in first coluom
-				LvItem.pszText="Item 0"; // Text to display (can be from a char variable) (Items)
+				LvItem.pszText=_strdup("Item 0"); // Text to display (can be from a char variable) (Items) memleak
                 
 				SendMessage(hList,LVM_INSERTITEM,0,(LPARAM)&LvItem); // Send to the Listview
 				
@@ -291,7 +296,7 @@ BOOL CALLBACK DialogProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 				// lets add a new Item:
                 LvItem.iItem=1;            // choose item  
 				LvItem.iSubItem=0;         // Put in first coluom
-				LvItem.pszText="Item 1";   // Text to display (can be from a char variable) (Items)
+				LvItem.pszText=_strdup("Item 1");   // Text to display (can be from a char variable) (Items) memleak
                 SendMessage(hList,LVM_INSERTITEM,0,(LPARAM)&LvItem); // Send to the Listview
 
 				for(i=1;i<=5;i++) // Add SubItems in a loop
